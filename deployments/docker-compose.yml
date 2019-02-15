@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  shorten-service:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.shorten
+    ports:
+      - "3032:3032"
+      - "3042:3042"
+
+  user-service:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.user
+    ports:
+      - "3033:3033"
+      - "3043:3043"
+  
+  notification-service:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.notification
+    ports:
+      - "3034:3034"
+      - "3044:3044"
+    environment:
+      - HOST=notification-service
+      - PORT=3034
+      - HTTP_PORT=3044
+      - SERVICE_NAME=notification
+      - SMTP_HOST=smtp.mailtrap.io
+      - SMTP_PORT=2525
+      - SMTP_USER=44e3e1cbc68e60
+      - SMTP_PASSWORD=8025e2398d567a
+
+  api-gateway:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.gateway
+    depends_on:
+      - shorten-service
+      - user-service
+      - notification-service
+    links:
+      - shorten-service
+      - user-service
+      - notification-service
+    ports:
+      - "8082:8082"
+
+  prometheus:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.prometheus
+    links:
+      - shorten-service
+      - user-service
+    ports:
+      - "9090:9090"

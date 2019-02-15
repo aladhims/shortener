@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package shorten;
+
+service Service {
+    rpc Shorten (ShortURL) returns (ShortenResponse);
+    rpc Expand (ExpandRequest) returns (ExpandResponse);
+    rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+enum URLType {
+    RANDOM = 0;
+    DEFINED = 1;
+}
+
+enum ShortenResponseStatus {
+    SUCCESS_SHORTEN = 0;
+    FAILED_SHORTEN = 1;
+    SLUG_ALREADY_EXISTS = 2;
+    SAME_ORIGIN = 3;
+}
+
+enum ExpandResponseStatus {
+    SUCCESS_EXPAND = 0;
+    NOT_FOUND = 1;
+}
+
+message ShortURL {
+    uint64 id = 1;
+    uint64 user_id = 2;
+    uint64 base = 3;
+    string origin = 4;
+    string slug = 5;
+    URLType url_type = 6;
+}
+
+message ShortenResponse {
+    string slug = 1;
+    ShortenResponseStatus status = 2;
+}
+
+message ExpandRequest {
+    string slug = 1;
+}
+
+message ExpandResponse {
+    ShortURL shortURL = 1;
+    ExpandResponseStatus status = 2;
+}
+
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+}

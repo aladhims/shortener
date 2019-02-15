@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+        containers:
+        - name: user-service
+          image: eu.gcr.io/<project-name>/shortener-user-service:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3033
+            name: user-port

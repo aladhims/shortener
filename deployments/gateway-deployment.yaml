@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+        containers:
+        - name: gateway-service
+          image: eu.gcr.io/<project-name>/shortener-gateway-service:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8082
+            name: gateway-port

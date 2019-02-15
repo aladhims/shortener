@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: shorten
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shorten
+  template:
+    metadata:
+      labels:
+        app: shorten
+    spec:
+        containers:
+        - name: shorten-service
+          image: eu.gcr.io/<project-name>/shortener-shorten-service:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3032
+            name: shorten-port

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: shorten
+spec:
+  ports:
+    - port: 3032
+      targetPort: 3032
+  selector:
+    app: shorten
+  type: LoadBalancer

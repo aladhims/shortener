@@ -81,7 +81,6 @@ func runGRPCServer() {
 }
 
 func init() {
-	os.Getenv("FOO")
 	port = os.Getenv("PORT")
 	host = os.Getenv("HOST")
 	httpPort = os.Getenv("HTTP_PORT")

@@ -3,6 +3,7 @@ package gateway
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -15,6 +16,7 @@ import (
 const (
 	STATUS_SUCCESS = "success"
 	STATUS_FAILED  = "failed"
+	API_VERSION    = "v1"
 )
 
 type response struct {
@@ -133,11 +135,23 @@ func (s *ApiGateway) handleExpand(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *ApiGateway) Run() {
+func (s *ApiGateway) handleHealth(w http.ResponseWriter, r *http.Request) {
+	if s.shortenClient == nil || s.userClient == nil || s.notificationClient == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "NOT_HEALTHY")
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "OK")
+}
+
+func (s *ApiGateway) Run(port string) {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/shorten", s.handleShorten).Methods("POST")
+	router.HandleFunc("/api/"+API_VERSION+"/shorten", s.handleShorten).Methods("POST")
+	router.HandleFunc("/api/"+API_VERSION+"/health", s.handleHealth).Methods("GET")
 	router.HandleFunc("/{slug}", s.handleExpand).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8082", router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

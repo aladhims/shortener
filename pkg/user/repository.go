@@ -21,4 +21,5 @@ type Reader interface {
 type Repository interface {
 	Writer
 	Reader
+	Ping() error
 }

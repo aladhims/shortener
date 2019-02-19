@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/aladhims/shortener/pkg/shorten"
@@ -19,9 +20,10 @@ import (
 var (
 	selfClient     pb.ServiceClient
 	selfAddr       string
-	serviceName    string
-	host           string
-	port           string
+	serviceName    string        = "shorten"
+	host           string        = "localhost"
+	port           string        = "3032"
+	httpPort       string        = "3042"
 	timeoutDur     time.Duration = time.Second
 	latencySummary prometheus.Summary
 	requestCounter prometheus.Counter
@@ -69,6 +71,13 @@ func runGRPCServer() {
 }
 
 func init() {
+	httpPort = os.Getenv("HTTP_PORT")
+	port = os.Getenv("PORT")
+	host = os.Getenv("HOST")
+	serviceName = os.Getenv("SERVICE_NAME")
+
+	selfAddr = host + ":" + port
+
 	requestCounter = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: "api",
@@ -91,13 +100,9 @@ func init() {
 }
 
 func main() {
-	port = "3032"
-	host = "shorten-service"
-	serviceName = "shorten"
 
 	go runGRPCServer()
 
-	selfAddr = host + ":" + port
 	selfConn, err := grpc.Dial(selfAddr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("can't connect")
@@ -110,5 +115,5 @@ func main() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/health", handleHealthCheck)
 
-	log.Fatal(http.ListenAndServe(":3042", nil))
+	log.Fatal(http.ListenAndServe(":"+httpPort, nil))
 }

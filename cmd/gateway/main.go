@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/aladhims/shortener/pkg/gateway"
 	notificationpb "github.com/aladhims/shortener/pkg/notification/proto"
@@ -11,41 +12,51 @@ import (
 )
 
 var (
-	shortenServiceHost string
-	shortenServicePort string
+	port string = "8082"
+
+	shortenServiceHost string = "localhost"
+	shortenServicePort string = "3032"
 	shortenServiceAddr string
 	shortenClient      shortenpb.ServiceClient
 
-	userServiceHost string
-	userServicePort string
+	userServiceHost string = "localhost"
+	userServicePort string = "3033"
 	userServiceAddr string
 	userClient      userpb.ServiceClient
 
 	notificationServiceHost string
-	notificationServicePort string
+	notificationServicePort string = "3034"
 	notificationServiceAddr string
 	notificationClient      notificationpb.ServiceClient
 )
 
-func main() {
+func init() {
+	port = os.Getenv("PORT")
 
-	shortenServiceHost = "shorten-service"
-	shortenServicePort = "3032"
+	shortenServiceHost = os.Getenv("SHORTEN_HOST")
+	shortenServicePort = os.Getenv("SHORTEN_PORT")
 
 	shortenServiceAddr = shortenServiceHost + ":" + shortenServicePort
+
+	userServiceHost = os.Getenv("USER_HOST")
+	userServicePort = os.Getenv("USER_PORT")
+
+	userServiceAddr = userServiceHost + ":" + userServicePort
+
+	notificationServiceHost = os.Getenv("NOTIFICATION_HOST")
+	notificationServicePort = os.Getenv("NOTIFICATION_PORT")
+
+	notificationServiceAddr = notificationServiceHost + ":" + notificationServicePort
+}
+
+func main() {
 	shortenConn, err := grpc.Dial(shortenServiceAddr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("can't connect")
 	}
-
 	defer shortenConn.Close()
 
 	shortenClient = shortenpb.NewServiceClient(shortenConn)
-
-	userServiceHost = "user-service"
-	userServicePort = "3033"
-
-	userServiceAddr = userServiceHost + ":" + userServicePort
 
 	userConn, err := grpc.Dial(userServiceAddr, grpc.WithInsecure())
 	if err != nil {
@@ -55,11 +66,6 @@ func main() {
 	defer userConn.Close()
 
 	userClient = userpb.NewServiceClient(userConn)
-
-	notificationServiceHost = "notification-service"
-	notificationServicePort = "3034"
-
-	notificationServiceAddr = notificationServiceHost + ":" + notificationServicePort
 
 	notificationConn, err := grpc.Dial(notificationServiceAddr, grpc.WithInsecure())
 	if err != nil {
@@ -71,5 +77,5 @@ func main() {
 	notificationClient = notificationpb.NewServiceClient(notificationConn)
 
 	frontendService := gateway.NewService(shortenClient, userClient, notificationClient)
-	frontendService.Run()
+	frontendService.Run(port)
 }

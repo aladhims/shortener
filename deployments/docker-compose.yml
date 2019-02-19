@@ -8,14 +8,43 @@ services:
     ports:
       - "3032:3032"
       - "3042:3042"
+    environment:
+      - HOST=shorten-service
+      - PORT=3032
+      - HTTP_PORT=3042
+      - SERVICE_NAME=shorten
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://shorten-service:3042/health"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
 
   user-service:
     build:
       context: ..
       dockerfile: ./build/Dockerfile.user
+    depends_on:
+      - user-db
+    links:
+      - user-db
     ports:
       - "3033:3033"
       - "3043:3043"
+    environment:
+      - HOST=user-service
+      - PORT=3033
+      - HTTP_PORT=3043
+      - SERVICE_NAME=user
+      - DB_HOST=user-db
+      - DB_PORT=5432
+      - DB_NAME=user
+      - DB_USER=aladhims
+      - DB_PASSWORD=123456
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://user-service:3043/health"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
   
   notification-service:
     build:
@@ -33,6 +62,11 @@ services:
       - SMTP_PORT=2525
       - SMTP_USER=44e3e1cbc68e60
       - SMTP_PASSWORD=8025e2398d567a
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://notification-service:3044/health"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
 
   api-gateway:
     build:
@@ -48,6 +82,37 @@ services:
       - notification-service
     ports:
       - "8082:8082"
+    environment:
+      - PORT=8082
+      - SHORTEN_HOST=shorten-service
+      - SHORTEN_PORT=3032
+      - USER_HOST=user-service
+      - USER_PORT=3033
+      - NOTIFICATION_HOST=notification-service
+      - NOTIFICATION_PORT=3034
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://api-gateway:8082/api/v1/health"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+
+  user-db:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.userdb
+    environment:
+      - POSTGRES_USER=aladhims
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=user
+      - PGDATA=/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./db/pgdata:/pgdata
 
   prometheus:
     build:

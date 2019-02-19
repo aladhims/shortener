@@ -54,3 +54,7 @@ func (i *Inmem) GetByEmail(email string) *pb.User {
 
 	return nil
 }
+
+func (i *Inmem) Ping() error {
+	return nil
+}

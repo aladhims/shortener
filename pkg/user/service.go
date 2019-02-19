@@ -49,6 +49,12 @@ func (s *service) Check(ctx context.Context, req *pb.HealthCheckRequest) (*pb.He
 		}, nil
 	}
 
+	if err := s.repository.Ping(); err != nil {
+		return &pb.HealthCheckResponse{
+			Status: pb.HealthCheckResponse_NOT_SERVING,
+		}, nil
+	}
+
 	return &pb.HealthCheckResponse{
 		Status: pb.HealthCheckResponse_SERVING,
 	}, nil

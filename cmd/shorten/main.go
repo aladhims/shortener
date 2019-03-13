@@ -9,6 +9,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/mongodb/mongo-go-driver/mongo"
+
 	"github.com/aladhims/shortener/pkg/shorten"
 	pb "github.com/aladhims/shortener/pkg/shorten/proto"
 	"github.com/prometheus/client_golang/prometheus"
@@ -19,6 +21,9 @@ import (
 
 var (
 	selfClient     pb.ServiceClient
+	mongoClient    *mongo.Client
+	mongoHost      string = "localhost"
+	mongoPort      string = "27017"
 	selfAddr       string
 	serviceName    string        = "shorten"
 	host           string        = "localhost"
@@ -56,8 +61,12 @@ func runGRPCServer() {
 	}
 
 	grpcServer := grpc.NewServer()
+	mongoClient, err := mongo.NewClient(fmt.Sprintf("mongodb://%s:%s", mongoHost, mongoPort))
+	if err != nil {
+		log.Fatalf("failed to connect to mongoDB: %v", err)
+	}
 
-	repo := shorten.NewInmemRepository()
+	repo := shorten.NewMongoRepository(mongoClient)
 	srv := shorten.NewService(repo)
 	srv = shorten.NewLoggingService(&logrus.Logger{
 		Formatter: new(logrus.JSONFormatter),
@@ -74,6 +83,8 @@ func init() {
 	httpPort = os.Getenv("HTTP_PORT")
 	port = os.Getenv("PORT")
 	host = os.Getenv("HOST")
+	mongoHost = os.Getenv("MONGO_HOST")
+	mongoPort = os.Getenv("MONGO_PORT")
 	serviceName = os.Getenv("SERVICE_NAME")
 
 	selfAddr = host + ":" + port
@@ -114,6 +125,20 @@ func main() {
 
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/health", handleHealthCheck)
+	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		_, err := selfClient.Shorten(context.Background(), &pb.ShortURL{
+			UserId:  121212,
+			Origin:  "https://www.aladhims.com",
+			Slug:    "me",
+			UrlType: pb.URLType_DEFINED,
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprint(w, "OK")
+	})
 
 	log.Fatal(http.ListenAndServe(":"+httpPort, nil))
 }

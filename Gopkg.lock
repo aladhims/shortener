@@ -10,6 +10,14 @@
   revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
 
 [[projects]]
+  digest = "1:586ea76dbd0374d6fb649a91d70d652b7fe0ccffb8910a77468e7702e7901f3d"
+  name = "github.com/go-stack/stack"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a"
+  version = "v1.8.0"
+
+[[projects]]
   digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
   name = "github.com/golang/protobuf"
   packages = [
@@ -22,6 +30,14 @@
   pruneopts = "UT"
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
   version = "v1.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:e4f5819333ac698d294fe04dbf640f84719658d5c7ce195b10060cc37292ce79"
+  name = "github.com/golang/snappy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2a8bb927dd31d8daada140a5d09578521ce5c36a"
 
 [[projects]]
   digest = "1:ca59b1175189b3f0e9f1793d2c350114be36eaabbe5b9f554b35edee1de50aea"
@@ -57,6 +73,45 @@
   pruneopts = "UT"
   revision = "c12348ce28de40eed0136aa2b644d0ee0650e56c"
   version = "v1.0.1"
+
+[[projects]]
+  digest = "1:9be9701967c831fb40a4b8b35c474b0a6e3af1f68ac35ad5fde6c44d71cbf4d1"
+  name = "github.com/mongodb/mongo-go-driver"
+  packages = [
+    "bson",
+    "bson/bsoncodec",
+    "bson/bsonrw",
+    "bson/bsontype",
+    "bson/primitive",
+    "event",
+    "internal",
+    "mongo",
+    "mongo/options",
+    "mongo/readconcern",
+    "mongo/readpref",
+    "mongo/writeconcern",
+    "tag",
+    "version",
+    "x/bsonx",
+    "x/bsonx/bsoncore",
+    "x/mongo/driver",
+    "x/mongo/driver/auth",
+    "x/mongo/driver/auth/internal/gssapi",
+    "x/mongo/driver/session",
+    "x/mongo/driver/topology",
+    "x/mongo/driver/uuid",
+    "x/network/address",
+    "x/network/command",
+    "x/network/compressor",
+    "x/network/connection",
+    "x/network/connstring",
+    "x/network/description",
+    "x/network/result",
+    "x/network/wiremessage",
+  ]
+  pruneopts = "UT"
+  revision = "e1f3d104525e687eda76125707c9852e429f2730"
+  version = "v0.3.0"
 
 [[projects]]
   digest = "1:93a746f1060a8acbcf69344862b2ceced80f854170e1caae089b2834c5fbf7f4"
@@ -113,9 +168,28 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:fde12c4da6237363bf36b81b59aa36a43d28061167ec4acb0d41fc49464e28b9"
+  digest = "1:40fdfd6ab85ca32b6935853bbba35935dcb1d796c8135efd85947566c76e662e"
+  name = "github.com/xdg/scram"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "7eeb5667e42c09cb51bf7b7c28aea8c56767da90"
+
+[[projects]]
+  branch = "master"
+  digest = "1:f5c1d04bc09c644c592b45b9f0bad4030521b1a7d11c7dadbb272d9439fa6e8e"
+  name = "github.com/xdg/stringprep"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "73f8eece6fdcd902c185bf651de50f3828bed5ed"
+
+[[projects]]
+  branch = "master"
+  digest = "1:82ecbc0909723597abc7d23d7e9030eb90f9c28dfaef0b55dd5120445394123f"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "pbkdf2",
+    "ssh/terminal",
+  ]
   pruneopts = "UT"
   revision = "74369b46fc6756741c016591724fd1cb8e26845f"
 
@@ -133,6 +207,14 @@
   ]
   pruneopts = "UT"
   revision = "65e2d4e15006aab9813ff8769e768bbf4bb667a0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:75515eedc0dc2cb0b40372008b616fa2841d831c63eedd403285ff286c593295"
+  name = "golang.org/x/sync"
+  packages = ["semaphore"]
+  pruneopts = "UT"
+  revision = "37e7f081c4d4c64e13b10787722085407fe5d15f"
 
 [[projects]]
   branch = "master"
@@ -223,6 +305,7 @@
     "github.com/golang/protobuf/proto",
     "github.com/gorilla/mux",
     "github.com/lib/pq",
+    "github.com/mongodb/mongo-go-driver/mongo",
     "github.com/prometheus/client_golang/prometheus",
     "github.com/prometheus/client_golang/prometheus/promhttp",
     "github.com/sirupsen/logrus",

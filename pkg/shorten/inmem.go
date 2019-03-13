@@ -29,17 +29,6 @@ func (i *Inmem) Create(shortURL *pb.ShortURL) error {
 	return nil
 }
 
-func (i *Inmem) Get(id uint64) *pb.ShortURL {
-	i.mtx.RLock()
-	defer i.mtx.RUnlock()
-
-	if shortURL, ok := i.shortURLs[id]; ok {
-		return shortURL
-	}
-
-	return nil
-}
-
 func (i *Inmem) GetByOrigin(origin string) *pb.ShortURL {
 	i.mtx.RLock()
 	defer i.mtx.RUnlock()
@@ -78,5 +67,8 @@ func (i *Inmem) GetByBase(base uint64) *pb.ShortURL {
 	}
 
 	return nil
+}
 
+func (i *Inmem) Ping() error {
+	return nil
 }

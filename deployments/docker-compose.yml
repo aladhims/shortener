@@ -101,6 +101,7 @@ services:
     build:
       context: ..
       dockerfile: ./build/Dockerfile.userdb
+    restart: always
     environment:
       - POSTGRES_USER=aladhims
       - POSTGRES_PASSWORD=123456
@@ -113,6 +114,13 @@ services:
       retries: 5
     volumes:
       - ./db/pgdata:/pgdata
+
+  shorten-db:
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=aladhims
+      - MONGO_INITDB_ROOT_PASSWORD=123456
 
   prometheus:
     build:

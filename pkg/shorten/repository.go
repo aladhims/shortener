@@ -14,13 +14,13 @@ type Writer interface {
 }
 
 type Reader interface {
-	Get(id uint64) *pb.ShortURL
 	GetByOrigin(origin string) *pb.ShortURL
 	GetBySlug(slug string) *pb.ShortURL
-	GetByBase(base uint64) *pb.ShortURL
+	GetByBase(origin uint64) *pb.ShortURL
 }
 
 type Repository interface {
 	Writer
 	Reader
+	Ping() error
 }
